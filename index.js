@@ -24,8 +24,8 @@ app.use("/api", router);
 
 //error handling middleware. Any 'next' callback calls in your routers above, then go here
 app.use(function (err, req, res, next) {
-  //console.log(err);
-  res.status(422).send({ error: err._message });
+  console.log(err);
+  res.status(422).send({ ...err });
 });
 
 //list for requests

@@ -1,19 +1,33 @@
 const mongoose = require("mongoose");
-const { genreSchema } = require("./genreSchema.js");
-const { authorSchema } = require("./authorSchema.js");
+const { genreSchema, Genre } = require("./genreSchema.js");
+const { authorSchema, Author } = require("./authorSchema.js");
 
 const bookSchema = new mongoose.Schema({
-  username: {
+  title: {
     type: String,
-    required: [true, "Username is required"],
+    unique: true,
+    required: [true, "Book must have a title"],
+    trim: true,
   },
-  created: {
-    type: Date,
-    required: [true, "Created date is required"],
+  description: {
+    type: String,
+    required: [true, "Book must have a description"],
+    trim: true,
   },
-  author: [authorSchema],
-  genre: [genreSchema],
+  author: { type: Object, required: true },
+  genres: { type: Array, required: false },
 });
+// ...
+bookSchema.pre("save", async function (next) {
+  this.author = await Author.findById(this.author);
+  next();
+});
+bookSchema.pre("save", async function (next) {
+  const promises = this.genres.map(async (id) => await Genre.findById(id));
+  this.genres = await Promise.all(promises);
+  next();
+});
+
 //arg1: create table called 'user', based on the arg2 schema,
 const Book = mongoose.model("book", bookSchema, "book");
 module.exports = Book;
