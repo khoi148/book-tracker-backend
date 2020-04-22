@@ -5,28 +5,35 @@ const Book = require("../models/bookSchema");
 const { Author } = require("../models/authorSchema");
 const { Genre } = require("../models/genreSchema");
 require("dotenv").config({ path: ".env" });
-
+const { authenticate } = require("../controller/authCont");
 //Get the list of Books
-router.get("/books", function (req, res, next) {
-  Book.find(function (err, books) {
-    if (err)
-      res
-        .status(400)
-        .send({ message: "error on GET request. Cannnot display all Books" });
-    res.send(books);
-  });
+router.route("/books").get(authenticate, async function (req, res, next) {
+  try {
+    const books = await Book.find({ "owner._id": req.user._id });
+    res.json({ status: "success", data: books });
+  } catch (error) {
+    res.status(400).json({ status: "fail", message: error.message });
+  }
 });
 //post a book to db, acts as "middleware" to handle your requests, before it hits your app
-router.post("/books", async (req, res, next) => {
+router.route("/books").post(authenticate, async function (req, res, next) {
   //create is where the "C" in CRUD happens, thanks to Mongoose. ORM style
   //returns a promise. Must handle accordingly
   try {
-    const newBook = new Book(req.body); // all the fields from req.body will go in here
+    const newBook = new Book({
+      ...req.body,
+      owner: {
+        _id: req.user._id,
+        name: req.user.name,
+        email: req.user.email,
+      },
+    });
+    console.log("newbook", newBook);
     await newBook.save();
-    res.status(201).send({ status: "success", data: newBook });
+    res.status(201).json({ status: "success", data: newBook });
   } catch (err) {
-    //res.status(400).json({ status: "fail", message: err.message });
-    next({ ...err.errors });
+    res.status(400).json({ status: "fail", ...err });
+    console.log("error in /books post", err);
   }
   //create() will always need all required fields to be set, else throw an error
 });
@@ -131,7 +138,10 @@ router.delete("/authors/:id", function (req, res, next) {
 
 const { createUser } = require("../controller/userCont");
 const { loginUser } = require("../controller/loginCont");
+const { logoutUser, logoutUserAll } = require("../controller/logoutCont");
 router.route("/users").post(createUser);
 router.route("/login").post(loginUser);
 
+router.get("/logout", authenticate, logoutUser);
+router.get("/logout-all", authenticate, logoutUserAll);
 module.exports = router;

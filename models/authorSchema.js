@@ -5,7 +5,6 @@ const authorSchema = mongoose.Schema({
     type: String,
     required: [true, "Author name is required"],
     trim: true,
-    unique: true,
   },
 });
 

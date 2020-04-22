@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
-
-exports.auth = async (req, res, next) => {
+const User = require("../models/userSchema");
+exports.authenticate = async (req, res, next) => {
   // make sure we get the token
   if (
     !req.headers.authorization ||
@@ -17,8 +17,10 @@ exports.auth = async (req, res, next) => {
     if (!user) throw new Error("Unauthorized");
 
     // attach user object to req object
+    console.log("Authorized");
     req.user = user;
   } catch (err) {
+    console.log("unAuth");
     return res.status(401).json({ status: "fail", message: err.message });
   }
   next();

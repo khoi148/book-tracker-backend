@@ -16,6 +16,10 @@ const bookSchema = new mongoose.Schema({
   },
   author: { type: Object, required: true },
   genres: { type: Array, required: false },
+  owner: {
+    type: Object,
+    require: [true, "Blog must have an owner"],
+  },
 });
 // ...
 bookSchema.pre("save", async function (next) {
