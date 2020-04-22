@@ -130,27 +130,8 @@ router.delete("/authors/:id", function (req, res, next) {
 });
 
 const { createUser } = require("../controller/userCont");
+const { loginUser } = require("../controller/loginCont");
 router.route("/users").post(createUser);
-
-// async function createUser(username) {
-//   return new Book({
-//     username,
-//     created: Date.now(),
-//   }).save();
-// }
-async function findUser(username) {
-  return await Book.findOne({ username });
-}
-
-//   const username = process.argv[2].split("=")[1];
-//   let user = await connector.then(async () => {
-//     return findUser(username);
-//   });
-//   if (!user) {
-//     user = await createUser(username);
-//   }
-//   console.log(user);
-//   process.exit(0);
-// })();
+router.route("/login").post(loginUser);
 
 module.exports = router;

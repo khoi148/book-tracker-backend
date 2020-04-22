@@ -10,7 +10,8 @@ exports.createUser = async function (req, res) {
 
   try {
     const user = await User.create({ name, email, password }); //shorthand, JS will set property 'name' to 'name', etc.
-    return res.status(201).json({ status: "ok", data: user });
+    const token = user.generateToken();
+    return res.status(201).json({ status: "ok", data: { user, token } });
   } catch (e) {
     console.log(e);
     return res.status(400).json({

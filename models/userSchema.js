@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema(
   {
@@ -53,6 +54,27 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, saltRounds);
   next();
 });
+
+userSchema.statics.loginWithEmail = async (email, password) => {
+  const user = await User.findOne({ email: email });
+  if (!user) {
+    throw new Error("Unable to login");
+  }
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) {
+    throw new Error("Unable to login");
+  }
+  return user;
+};
+userSchema.methods.generateToken = async function () {
+  const user = this;
+  const token = jwt.sign({ id: user._id }, process.env.secret, {
+    expiresIn: "7d",
+  });
+  user.tokens.push(token);
+  await user.save();
+  return token;
+};
 
 //arg1: create table called 'user', based on the arg2 schema,
 const User = mongoose.model("users", userSchema, "users");
