@@ -129,12 +129,15 @@ router.delete("/authors/:id", function (req, res, next) {
   });
 });
 
-async function createUser(username) {
-  return new Book({
-    username,
-    created: Date.now(),
-  }).save();
-}
+const { createUser } = require("../controller/userCont");
+router.route("/users").post(createUser);
+
+// async function createUser(username) {
+//   return new Book({
+//     username,
+//     created: Date.now(),
+//   }).save();
+// }
 async function findUser(username) {
   return await Book.findOne({ username });
 }
