@@ -2,25 +2,39 @@ const mongoose = require("mongoose");
 const { genreSchema, Genre } = require("./genreSchema.js");
 const { authorSchema, Author } = require("./authorSchema.js");
 
-const bookSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    unique: true,
-    required: [true, "Book must have a title"],
-    trim: true,
+const bookSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      unique: true,
+      required: [true, "Book must have a title"],
+      trim: true,
+    },
+    description: {
+      type: String,
+      required: [true, "Book must have a description"],
+      trim: true,
+    },
+    author: { type: Object, required: true },
+    genres: { type: Array, required: false },
+    owner: {
+      type: Object,
+      require: [true, "Blog must have an owner"],
+    },
   },
-  description: {
-    type: String,
-    required: [true, "Book must have a description"],
-    trim: true,
-  },
-  author: { type: Object, required: true },
-  genres: { type: Array, required: false },
-  owner: {
-    type: Object,
-    require: [true, "Blog must have an owner"],
-  },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
+);
+bookSchema.virtual("reviews", {
+  ref: "reviews", //data table we are referring to
+  localField: "_id", //localField is where we start from, so start from _id in the reviews collection
+  foreignField: "bookId", //the model, foreign keys we are referencing to
+  //count: true, will only put a prop that has the number of review documents associated. Don't use it, to just show simpled embedded documents
 });
+
 // ...
 bookSchema.pre("save", async function (next) {
   this.author = await Author.findById(this.author);

@@ -19,9 +19,9 @@ exports.authenticate = async (req, res, next) => {
     // attach user object to req object
     console.log("Authorized");
     req.user = user;
+    return next();
   } catch (err) {
     console.log("unAuth");
     return res.status(401).json({ status: "fail", message: err.message });
   }
-  next();
 };

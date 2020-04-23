@@ -6,6 +6,20 @@ const { Author } = require("../models/authorSchema");
 const { Genre } = require("../models/genreSchema");
 require("dotenv").config({ path: ".env" });
 const { authenticate } = require("../controller/authCont");
+const { createUser } = require("../controller/userCont");
+const { loginUser } = require("../controller/loginCont");
+const { logoutUser, logoutUserAll } = require("../controller/logoutCont");
+const { createReview, readReview } = require("../controller/reviewCont");
+const { validateBook } = require("../middleware/validateBook");
+
+router.route("/users").post(createUser);
+router.route("/login").post(loginUser);
+
+router.get("/logout", authenticate, logoutUser);
+router.get("/logout-all", authenticate, logoutUserAll);
+router.get("/reviews", authenticate, readReview);
+router.post("/reviews", authenticate, validateBook, createReview);
+
 //Get the list of Books
 router.route("/books").get(authenticate, async function (req, res, next) {
   try {
@@ -136,12 +150,8 @@ router.delete("/authors/:id", function (req, res, next) {
   });
 });
 
-const { createUser } = require("../controller/userCont");
-const { loginUser } = require("../controller/loginCont");
-const { logoutUser, logoutUserAll } = require("../controller/logoutCont");
-router.route("/users").post(createUser);
-router.route("/login").post(loginUser);
-
-router.get("/logout", authenticate, logoutUser);
-router.get("/logout-all", authenticate, logoutUserAll);
+//1. new schema,
+//2. new route and controller
+//3.create a new instance of that schema,
+//4.Write to database
 module.exports = router;
