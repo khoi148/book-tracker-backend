@@ -20,6 +20,10 @@ router.get("/logout-all", authenticate, logoutUserAll);
 router.get("/reviews", authenticate, readReview);
 router.post("/reviews", authenticate, validateBook, createReview);
 
+router.get("/", async function (req, res, next) {
+  res.send({ status: "success", data: "application routes are working" });
+});
+
 //Get the list of Books
 router.route("/books").get(authenticate, async function (req, res, next) {
   try {
