@@ -22,7 +22,7 @@ mongoose.connect(connectionString, {
 mongoose.Promise = global.Promise;
 
 //init routes
-app.use("/api", router);
+app.use(router);
 
 //error handling middleware. Any 'next' callback calls in your routers above, then go here
 app.use(function (err, req, res, next) {
