@@ -35,11 +35,12 @@ bookSchema.virtual("reviews", {
   //count: true, will only put a prop that has the number of review documents associated. Don't use it, to just show simpled embedded documents
 });
 
-// ...
+// ...Every time we create a book, using save() to mongoose, with a author object id, insert the find author object before Mongoose saves to DB
 bookSchema.pre("save", async function (next) {
   this.author = await Author.findById(this.author);
   next();
 });
+//same thing, like above, but for genre ids - will be converted to Genre objects by Mongoose before being saved to noSql DB
 bookSchema.pre("save", async function (next) {
   const promises = this.genres.map(async (id) => await Genre.findById(id));
   this.genres = await Promise.all(promises);

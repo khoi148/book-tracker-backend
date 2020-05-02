@@ -1,5 +1,13 @@
 const User = require("../models/userSchema");
 
+exports.listUsers = async function (req, res) {
+  try {
+    const users = await User.find();
+    res.json({ status: "success", data: users });
+  } catch (e) {
+    res.status(400).json({ status: "fail", message: e.message });
+  }
+};
 exports.createUser = async function (req, res) {
   const { name, email, password, pwconfirm } = req.body;
   if (pwconfirm !== password || pwconfirm === null)
@@ -9,14 +17,14 @@ exports.createUser = async function (req, res) {
     });
 
   try {
+    //make sure to await the create, and token methods. They are async
     const user = await User.create({ name, email, password }); //shorthand, JS will set property 'name' to 'name', etc.
-    const token = user.generateToken();
-    return res.status(201).json({ status: "ok", data: { user, token } });
+    const token = await user.generateToken();
+    return res.json({ status: "success", data: { user, token } });
   } catch (e) {
-    console.log(e);
     return res.status(400).json({
       status: "fail",
-      error: e.errmsg,
+      message: e.message,
     });
   }
 };

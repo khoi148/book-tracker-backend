@@ -8,8 +8,7 @@ exports.validateBook = async function (req, res, next) {
     req.book = book;
     next();
   } catch (e) {
-    console.log(e);
-    return res
+    res
       .status(404)
       .json({ status: "fail", error: "no book with that ID exists" });
   }
