@@ -30,5 +30,16 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
+reviewSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+  delete obj.__v;
+  return obj;
+};
+//populates/changes our objectIds into their objects, then returns the specified fields
+reviewSchema.pre(/^find/, function (next) {
+  this.populate("user", "-password -__v -tokens -createdAt -updatedAt");
+  next();
+});
+
 const Review = mongoose.model("reviews", reviewSchema);
 module.exports = Review;

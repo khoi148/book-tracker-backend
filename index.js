@@ -1,5 +1,6 @@
 //Tours-Project Branch, setup
 const express = require("express");
+const router = express.Router();
 const app = express();
 require("dotenv").config({ path: ".env" }); //specify where env is, while using Express
 const bodyParser = require("body-parser");
@@ -25,12 +26,7 @@ app.use(require("./routes/userRouter"));
 app.use(require("./routes/reviewRouter"));
 app.use(require("./routes/tourRouter"));
 app.use(require("./routes/categoryRouter"));
-
-//error handling middleware. Any 'next' callback calls in your routers above, then go here
-app.use(function (err, req, res, next) {
-  console.log("this is an error", err);
-  res.status(422).send({ ...err });
-});
+app.use(require("./controller/errorHandler"));
 
 //listen for requests, on app start
 app.listen(process.env.PORT || 3000, function () {
