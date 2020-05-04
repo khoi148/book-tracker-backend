@@ -7,15 +7,20 @@ const reviewSchema = new mongoose.Schema(
       ref: "users",
       required: [true, "userId is required for Review"],
     },
-    bookId: {
+    tour: {
       type: mongoose.Schema.ObjectId,
-      ref: "book",
-      required: [true, "bookId is required for Review"],
+      ref: "tours",
+      required: [true, "tourId is required for Review"],
     },
-    content: {
+    rating: {
+      type: Number,
+      required: [true, "Review needs a rating"],
+      min: 1,
+      max: 5,
+    },
+    review: {
       type: String,
-      required: [true, "Review needs content"],
-      minLength: 10,
+      required: [true, "Review context text is needed"],
     },
   },
   {

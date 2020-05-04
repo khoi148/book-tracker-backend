@@ -6,7 +6,7 @@ require("dotenv").config({ path: ".env" });
 
 //middleware
 const { authenticate } = require("../middleware/authenticate");
-const { validateBook } = require("../middleware/validateBook");
+const { checkTour } = require("../middleware/checkTour");
 
 //user register and login routes
 const { createUser, listUsers } = require("../controller/userCont");
@@ -23,7 +23,7 @@ router.get("/logout-all", authenticate, logoutUserAll);
 //reviews routes
 const { createReview, readReview } = require("../controller/reviewCont");
 router.get("/reviews", authenticate, readReview);
-router.post("/reviews", authenticate, validateBook, createReview);
+router.post("/reviews", authenticate, checkTour, createReview);
 
 //home default route
 router.get("/", async function (req, res, next) {
@@ -32,39 +32,29 @@ router.get("/", async function (req, res, next) {
 
 //Book routes
 const {
-  listBooks,
-  createBook,
-  updateBook,
-  deleteBook,
-} = require("../controller/bookCont.js");
-router.route("/books").get(authenticate, listBooks);
-router.route("/books").post(authenticate, createBook);
-router.put("/books/:id", authenticate, updateBook);
-router.delete("/books/:id", authenticate, deleteBook);
+  listTours,
+  createTour,
+  readTour,
+} = require("../controller/tourCont.js");
+//deleteTour,
+//updateTour,
+router.route("/tours").get(authenticate, listTours);
+router.route("/tours").post(authenticate, createTour);
+router.route("/read-tour/:id").get(authenticate, readTour);
+//router.put("/tours/:id", authenticate, updateBook);
+//router.delete("/tours/:id", authenticate, deleteBook);
 
-//Genre Routes
+//Categories routes
 const {
-  listGenres,
-  createGenre,
-  updateGenre,
-  deleteGenre,
-} = require("../controller/genreCont.js");
-router.get("/genres", listGenres);
-router.post("/genres", createGenre);
-router.put("/genres/:id", updateGenre);
-router.delete("/genres/:id", deleteGenre);
-
-//Author Routes
-const {
-  listAuthors,
-  createAuthor,
-  updateAuthor,
-  deleteAuthor,
-} = require("../controller/authorCont.js");
-router.get("/authors", listAuthors);
-router.post("/authors", createAuthor);
-router.put("/authors/:id", updateAuthor);
-router.delete("/authors/:id", deleteAuthor);
+  listCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+} = require("../controller/categoryCont.js");
+router.get("/categories", listCategories);
+router.post("/categories", createCategory);
+router.put("/categories/:id", updateCategory);
+router.delete("/categories/:id", deleteCategory);
 
 /*process of creating new collection in database
 //1. new schema,

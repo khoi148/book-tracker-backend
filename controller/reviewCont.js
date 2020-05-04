@@ -1,29 +1,30 @@
 const Review = require("../models/reviewSchema");
-const Book = require("../models/bookSchema");
+const Tour = require("../models/tourSchema");
 
 exports.createReview = async function (req, res) {
-  const { content } = req.body;
   try {
-    const review = await Review.create({
-      content: content,
-      bookId: req.book._id /*middleware already puts the book id in req*/,
-      user: req.user._id /*middleware already puts the user id in req*/,
-    });
-    res.status(200).json({ status: "success", data: review });
-  } catch (err) {
-    return res.status(500).json({ status: "fail", message: err.message });
+    // create review or update existing review
+    const review = await Review.findOneAndUpdate(
+      { user: req.user._id, tour: req.body.tour },
+      { ...req.body, user: req.user._id } /*How we update if found*/,
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+    res.status(201).json({ status: "success", data: review });
+  } catch (error) {
+    res.status(400).json({ status: "fail", message: error.message });
   }
 };
 
 exports.readReview = async function (req, res, next) {
   try {
-    let book = await Book.find({ _id: req.body.bookId }).populate("reviews");
-    //populate will not define reviews property if there is no reviews yet for the book
+    //note populate only happens at runtime, we cannot check for reviews prop before hand.
+    //populate will not define "reviews" property if there is no reviews yet for the book
+    let tour = await Tour.find({ _id: req.body.tour }).populate("reviews");
     return res.status(200).json({
       status: "success",
-      data: book,
+      data: tour,
     });
   } catch (e) {
-    next({ status: "fail", error: "can't find book with that id" });
+    next({ status: "fail", error: "can't find tour with that id" });
   }
 };
