@@ -4,8 +4,15 @@ const { authenticate } = require("../middleware/authenticate");
 const { checkTour } = require("../middleware/checkTour");
 
 //reviews routes
-const { createReview, readReview } = require("../controller/reviewCont");
-router.get("/reviews", authenticate, readReview);
-router.post("/reviews", authenticate, checkTour, createReview);
+const {
+  createOrEditReview,
+  readReview,
+  listReviews,
+  deleteReview,
+} = require("../controller/reviewCont");
+router.get("/reviews/:id", authenticate, readReview);
+router.delete("/reviews/:id", authenticate, deleteReview);
+router.get("/reviews", authenticate, listReviews);
+router.post("/reviews", authenticate, checkTour, createOrEditReview);
 
 module.exports = router;
