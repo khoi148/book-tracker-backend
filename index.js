@@ -1,14 +1,13 @@
-//Lab Branch
-
+//Tours-Project Branch, setup
 const express = require("express");
-require("dotenv").config({ path: ".env" });
+const app = express();
+require("dotenv").config({ path: ".env" }); //specify where env is, while using Express
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const router = require("./routes/api");
-//set up
-const app = express();
+
+//middleware to read request body in JSON format
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json()); //middleware to read the request body
+app.use(bodyParser.json());
 
 //connect to mongodb
 const connectionString = process.env.DB_LOCAL;
@@ -19,10 +18,13 @@ mongoose.connect(connectionString, {
   useFindAndModify: false,
   useUnifiedTopology: true,
 });
-mongoose.Promise = global.Promise;
 
 //init routes
-app.use(router);
+app.use(require("./routes/api"));
+app.use(require("./routes/userRouter"));
+app.use(require("./routes/reviewRouter"));
+app.use(require("./routes/tourRouter"));
+app.use(require("./routes/categoryRouter"));
 
 //error handling middleware. Any 'next' callback calls in your routers above, then go here
 app.use(function (err, req, res, next) {
@@ -30,7 +32,7 @@ app.use(function (err, req, res, next) {
   res.status(422).send({ ...err });
 });
 
-//list for requests
+//listen for requests, on app start
 app.listen(process.env.PORT || 3000, function () {
   console.log("now listening for requests");
 });

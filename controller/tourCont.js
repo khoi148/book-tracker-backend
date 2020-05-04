@@ -33,3 +33,21 @@ exports.createTour = async function (req, res) {
       .json({ status: "fail", message: "createTour error, " + err.message });
   }
 };
+
+exports.updateTour = async function (req, res, next) {
+  Tour.findByIdAndUpdate({ _id: req.params.id }, req.body).then(function () {
+    //note that the .then function input here, actually will returned the outdated element (before it gets updated)...
+    //So we need to get the curreny element, by using a Mongoose getter right after
+    Tour.findOne({ _id: req.params.id }).then(function (tour) {
+      res.send(tour);
+    });
+  });
+};
+
+exports.deleteTour = async function (req, res, next) {
+  Tour.findByIdAndRemove({ _id: req.params.id }).then(function (tour) {
+    if (tour === null)
+      res.send({ message: "no category by that ID found for deletion" });
+    else res.send(tour);
+  });
+};

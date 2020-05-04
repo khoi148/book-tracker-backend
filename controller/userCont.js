@@ -8,6 +8,7 @@ exports.listUsers = async function (req, res) {
     res.status(400).json({ status: "fail", message: e.message });
   }
 };
+
 exports.createUser = async function (req, res) {
   const { name, email, password, pwconfirm } = req.body;
   if (pwconfirm !== password || pwconfirm === null)
