@@ -18,7 +18,7 @@ const tourSchema = new mongoose.Schema(
       ref: "categories",
       required: [true, "Tour must have a category"],
     },
-    organizer: {
+    user: {
       type: mongoose.Schema.ObjectId,
       ref: "users",
       required: [true, "Tour must have an organizer"],
