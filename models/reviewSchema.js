@@ -32,7 +32,7 @@ const reviewSchema = new mongoose.Schema(
 
 //updates averageRating and averageQuantity fields
 reviewSchema.statics.calculateAvgRating = async function (tourId) {
-  //find all reviews with tourId and
+  //find all reviews with tourId
   /*generate a new object with {
     _id: tourId,
     ratingQ: number of docs found,
@@ -50,28 +50,34 @@ reviewSchema.statics.calculateAvgRating = async function (tourId) {
   ]);
   //stats will return [{_id: ,}]
   //save the data to our database
-  console.log("Tour: ", Tour);
+  console.log("stats: ", stats);
   await Tour.findByIdAndUpdate(tourId, {
     ratingAverage: stats.length === 0 ? 0 : stats[0].ratingAverage,
     ratingQuantity: stats.length === 0 ? 0 : stats[0].ratingQuantity,
   });
+  //console.log("results", mongoose.Model("tours").findOne({ _id: tourId }));
 };
-//To update the avg rating/quantity after each save method
-reviewSchema.post("save", function (next) {
+
+//To update the avg rating/quantity after each save doc method.
+reviewSchema.post("save", async function (next) {
   //Note: in this middleware, this = doc(instance)
-  this.constructor.calculateAvgRating(this.tour);
+  console.log("post save", this);
+  await this.constructor.calculateAvgRating(this.tour);
 });
 
+const AppError = require("../utils/appError");
 // create pre hook and pass the document to post hook
 reviewSchema.pre(/^findOneAnd/, async function (next) {
-  this.doc = await this.findOne();
+  this.doc = await this.findOne(); //attaching object to response
   if (!this.doc) return next(new AppError(404, "Review not found"));
   next();
 });
-//every time a findOne happens, on the Review model (CRUD),
-//update the corresponding tour avgQ and avgR fields of the corresponding tour
+//every time a findOne happens, on the Review model (CRUD),update the corresponding tour avgQ and avgR fields of the corresponding tour
 reviewSchema.post(/^findOneAnd/, async function () {
-  await this.doc.constructor.calcAverageRating(this.doc.tour);
+  console.log("this.doc", this.doc);
+  await this.doc.constructor.calculateAvgRating(this.doc.tour);
+  //this line on 77 keeps throwing an error of not being a functions
+  //happens on the delete query calls
 });
 
 reviewSchema.methods.toJSON = function () {

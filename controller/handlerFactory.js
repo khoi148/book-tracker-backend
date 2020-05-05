@@ -3,14 +3,8 @@ const { catchAsync } = require("../utils/catchAsync");
 
 exports.createOne = (Model) =>
   catchAsync(async (req, res) => {
-    try {
-      const tour = await Model.create({ ...req.body, user: req.user._id });
-      res.status(201).json({ status: "success", data: tour });
-    } catch (err) {
-      res
-        .status(400)
-        .json({ status: "fail", message: "createTour error, " + err.message });
-    }
+    const tour = await Model.create({ ...req.body, user: req.user._id });
+    res.status(201).json({ status: "success", data: tour });
   });
 
 // original deleteReview handler
