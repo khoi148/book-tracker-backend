@@ -77,7 +77,7 @@ reviewSchema.post(/^findOneAnd/, async function () {
   console.log("this.doc", this.doc);
   await this.doc.constructor.calculateAvgRating(this.doc.tour);
   //this line on 77 keeps throwing an error of not being a functions
-  //happens on the delete query calls
+  //happens on the delete query calls. thks :>
 });
 
 reviewSchema.methods.toJSON = function () {
