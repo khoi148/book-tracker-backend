@@ -13,11 +13,35 @@ const tourSchema = new mongoose.Schema(
       required: [true, "Tour must have a description"],
       trim: true,
     },
-    category: {
-      type: mongoose.Schema.ObjectId,
-      ref: "categories",
-      required: [true, "Tour must have a category"],
+    category: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "categories",
+        required: [true, "Tour must have a category"],
+      },
+    ],
+    //new fields
+    duration: {
+      type: Number,
+      required: [true, "Tour must have a duration"],
     },
+    price: {
+      type: Number,
+      required: [true, "Tour must have a price"],
+      min: 0,
+    },
+    ratingAverage: {
+      type: Number,
+      default: 0,
+      min: [0, "Rating must be above 0"],
+      max: [5, "Rating must be below 5.0"],
+      set: (value) => Math.round(value * 10) / 10,
+    },
+    ratingQuantity: {
+      type: Number,
+      default: 0,
+    },
+    //foreign references
     user: {
       type: mongoose.Schema.ObjectId,
       ref: "users",
