@@ -13,6 +13,6 @@ exports.loginUser = async function (req, res) {
     const token = await user.generateToken(); //saves token to user, and returns the token
     res.json({ status: "success", data: { user, token } });
   } catch (err) {
-    res.status(400).json({ status: "fail", message: err.message });
+    res.status(404).json({ status: "fail", message: err.message });
   }
 };

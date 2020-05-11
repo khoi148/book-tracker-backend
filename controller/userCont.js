@@ -3,16 +3,16 @@ const User = require("../models/userSchema");
 exports.listUsers = async function (req, res) {
   try {
     const users = await User.find();
-    res.json({ status: "success", data: users });
+    return res.json({ status: "success", data: users });
   } catch (e) {
-    res.status(400).json({ status: "fail", message: e.message });
+    return res.status(400).json({ status: "fail", message: e.message });
   }
 };
 
 exports.createUser = async function (req, res) {
   const { name, email, password, pwconfirm } = req.body;
   if (pwconfirm !== password || pwconfirm === null)
-    res.status(400).send({
+    return res.status(400).send({
       status: "fail",
       message: "password confirm does not match password",
     });
@@ -23,7 +23,7 @@ exports.createUser = async function (req, res) {
     const token = await user.generateToken();
     return res.json({ status: "success", data: { user, token } });
   } catch (e) {
-    return res.status(400).json({
+    return res.status(400).send({
       status: "fail",
       message: e.message,
     });
