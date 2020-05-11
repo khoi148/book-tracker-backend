@@ -2,7 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const app = express();
-require("dotenv").config({ path: ".env" }); //specify where env is, while using Express
+//specify where env is, while using Express
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 

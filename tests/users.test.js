@@ -2,14 +2,12 @@ const app = require("../app");
 const request = require("supertest");
 const User = require("../models/userSchema");
 require("dotenv").config({ path: "test.env" }); //specify where env is, while using Express
-//
+
+const { userOneId, userOne } = require("./db.js");
+const { createUser } = require("../controller/userCont.js");
 beforeEach(async () => {
   await User.deleteMany();
-  // const user = User.create({
-  //   email: "khoatest@gmail.com",
-  //   name: "khoatest",
-  //   password: "12345",
-  // });
+  await new User(userOne).save();
   //user.save();
 });
 
@@ -46,26 +44,32 @@ test("Failed Login User", async () => {
   await request(app)
     .post("/login")
     .send({
-      email: "test@yahoo.com",
-      password: "12345",
+      email: "fail@gmail.com",
+      password: "fail",
     })
     .expect(404);
 });
 
 test("Successful login user of Khoa test user", async () => {
-  let email = "khoa@yahoo.com";
+  let email = "alex123@gmail.com";
   let pw = "12345";
-  let name = "khoatest";
-  const user = await User.create({
-    email: email,
-    name: name,
-    password: pw,
-  });
+
   await request(app)
     .post("/login")
     .send({
       email: email,
       password: pw,
     })
+    .expect(200)
+    .then((res) => {
+      expect(res.body.data.user.email).toBe("alex123@gmail.com");
+    });
+});
+
+test("Should get own profile", async () => {
+  await request(app)
+    .get("/users/me")
+    .set("Authorization", `Bearer ${userOne.tokens[0]}`)
+    .send()
     .expect(200);
 });
