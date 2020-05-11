@@ -13,7 +13,7 @@ function errorHandler(err, req, res, next) {
 }
 
 router.all("/*", async function (req, res, next) {
-  res.send({ status: "fail", message: "wrong URL not found" });
+  res.status(404).send({ status: "fail", message: "wrong URL not found" });
 });
 
 module.exports = router;
