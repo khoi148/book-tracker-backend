@@ -22,7 +22,7 @@ mongoose.connect(connectionString, {
 //auth through FB
 const passport = require("./auth/facebookPassport");
 app.use(passport.initialize());
-const passport2 = require("./auth/googlePassport");
+const passport2 = require("./auth/githubPassport");
 app.use(passport2.initialize());
 
 //init routes

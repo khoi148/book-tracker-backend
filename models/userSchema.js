@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema(
       required: [true, "User must have a name"],
       trim: true,
       minLength: 3,
+      toLowerCase: true,
     },
     email: {
       type: String,
@@ -44,10 +45,7 @@ userSchema.methods.toJSON = function () {
   delete userObject.__v;
   return userObject;
 };
-// import bcrypt
-
 const saltRounds = 10;
-// ....
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, saltRounds);
@@ -74,7 +72,19 @@ userSchema.methods.generateToken = async function () {
   await user.save();
   return token;
 };
-
+userSchema.statics.findOneOrCreate = async function (obj) {
+  let found = await this.findOne({ email: obj.email });
+  if (!found) {
+    found = await this.create({
+      email: obj.email,
+      name: obj.last_name + " " + obj.first_name,
+    });
+  } else {
+    console.log("found email: " + obj.email + " in DB");
+  }
+  found.token = await found.generateToken();
+  return found;
+};
 //arg1: create table called 'user', based on the arg2 schema,
 const User = mongoose.model("users", userSchema, "users");
 module.exports = User;

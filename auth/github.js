@@ -10,7 +10,7 @@ module.exports = new githubStrategy(
   },
   // verification function (callback). Takes 4 args
   function (request, accessToken, refreshToken, profile, cb) {
-    console.log(profile);
+    console.log("profile === ", profile);
     // todo
     cb(null, profile._json);
   }
