@@ -32,6 +32,5 @@ exports.createUser = async function (req, res) {
 
 exports.lookupUser = async function (req, res) {
   console.log("upload", req.avatar);
-  const userRef = { ...req.user, avatar: req.upload };
   res.status(200).send({ status: "success", data: userRef });
 };

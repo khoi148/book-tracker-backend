@@ -19,7 +19,11 @@ mongoose.connect(connectionString, {
   useFindAndModify: false,
   useUnifiedTopology: true,
 });
-//df
+//auth through FB
+const passport = require("./auth/facebookPassport");
+app.use(passport.initialize());
+const passport2 = require("./auth/googlePassport");
+app.use(passport2.initialize());
 
 //init routes
 app.use(require("./routes/api"));
